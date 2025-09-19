@@ -1,0 +1,13 @@
+# Blokuj metody inne niż POST do contact.php
+<Files "contact.php">
+  <LimitExcept POST>
+    Require all denied
+  </LimitExcept>
+</Files>
+
+# Dodatkowe nagłówki bezpieczeństwa (fallback)
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "no-referrer"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>

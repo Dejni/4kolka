@@ -9,12 +9,12 @@ const BIZ = {
   slogan: "SZYBKIE NAPRAWY",
   phone: "+48 796 437 107",
   phoneHref: "tel:+48796437107",
-  street: "Sadowa 20",
-  postal: "72-100",
-  city: "Goleniów",
+  street: "Łoźnica 35",
+  postal: "72-122",
+  city: "Łoźnica",
   region: "Zachodniopomorskie",
   email: "fanatycy35@gmail.com",
-  mapQuery: "Sadowa 20, 72-100 Goleniów",
+  mapQuery: "Łoźnica 35, 72-122",
   legal: {
     company: "Mateusz Góral",
     nip: "",
@@ -22,14 +22,6 @@ const BIZ = {
     seat: { street: "Łoźnica 35", postal: "72-122", city: "Łoźnica" },
     hours: "pon.–sob. 8:00–16:00",
   },
-};
-
-const SECOND = {
-  label: "Łoźnica",
-  street: "Łoźnica 35",
-  postal: "72-122",
-  city: "Łoźnica",
-  mapQuery: "Łoźnica 35, 72-122",
 };
 
 const LINKS = {
@@ -804,14 +796,6 @@ export default function Website() {
                 addressRegion: BIZ.region,
                 addressCountry: "PL",
               },
-              {
-                "@type": "PostalAddress",
-                streetAddress: SECOND.street,
-                addressLocality: SECOND.city,
-                postalCode: SECOND.postal,
-                addressRegion: BIZ.region,
-                addressCountry: "PL",
-              }
             ],
             areaServed: BIZ.region,
             url: "https://twojadomena.pl",
@@ -835,7 +819,7 @@ export default function Website() {
               </h1>
               <p className="mt-2 text-2xl font-black tracking-wide text-white/90 sm:text-3xl">{BIZ.slogan}</p>
               <p className="mt-6 max-w-prose text-white/70">
-                Profesjonalny serwis samochodowy w {BIZ.city} i {SECOND.city}. Szybko diagnozujemy usterki, naprawiamy i oddajemy auto w pełni sprawne, często tego samego dnia.
+                Profesjonalny serwis samochodowy w {BIZ.city}. Szybko diagnozujemy usterki, naprawiamy i oddajemy auto w pełni sprawne, często tego samego dnia.
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
                 <TelLink className="justify-self-end inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 font-semibold shadow hover:bg-rose-500">
@@ -848,33 +832,29 @@ export default function Website() {
                   <MapPin className="h-5 w-5" /> Nawiguj
                 </a>
               </div>
-              <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <Stat value="15 min" label="Średni czas wyceny" />
-                <Stat value="> 2000" label="Napraw rocznie" />
-                <Stat value="Car Audio" label="Montaż i konfiguracja" />
-              </div>
             </div>
           </ScaledLayer>
           <ScaledLayer id="hero-right" dx={HERO.right.dx} dy={HERO.right.dy} scale={HERO.right.scale}>
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
               <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 p-8 shadow-2xl" style={carbonStyle}>
-                <div className="relative z-10">
-                  <div className="space-y-8">
-                    <div>
-                      <h4 className="text-sm font-semibold text-white/80">{BIZ.city}</h4>
-                      <div className="mt-2 flex items-center gap-2 text-white/80"><MapPin className="h-5 w-5" /> {BIZ.street}, {BIZ.postal} {BIZ.city}</div>
-                      <MapEmbed query={BIZ.mapQuery} title={`Mapa dojazdu – ${BIZ.city}`} height={320} />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-white/80">{SECOND.city}</h4>
-                      <div className="mt-2 flex items-center gap-2 text-white/80"><MapPin className="h-5 w-5" /> {SECOND.street}, {SECOND.postal} {SECOND.city}</div>
-                      <MapEmbed query={SECOND.mapQuery} title={`Mapa dojazdu – ${SECOND.city}`} height={320} />
-                    </div>
+                <div className="relative z-10 space-y-6">
+                  <div>
+                    <h4 className="text-sm font-semibold text-white/80">{BIZ.city}</h4>
+                    <div className="mt-2 flex items-center gap-2 text-white/80"><MapPin className="h-5 w-5" /> {BIZ.street}, {BIZ.postal} {BIZ.city}</div>
                   </div>
+                  <MapEmbed query={BIZ.mapQuery} title={`Mapa dojazdu – ${BIZ.city}`} height={320} />
                 </div>
               </div>
             </motion.div>
           </ScaledLayer>
+        </div>
+        <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <Stat value="15 min" label="Średni czas wyceny" />
+          <Stat value="> 2000" label="Napraw rocznie" />
+          <Stat value="Car Audio" label="Montaż i konfiguracja" />
+          <Stat value="Serwis" label="Olej • filtry" />
+          <Stat value="Diagnoza" label="Tester live-data" />
+          <Stat value="Reflektory" label="Renowacja UV" />
         </div>
       </Section>
 
@@ -913,7 +893,7 @@ export default function Website() {
         <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-2xl bg-white/5 p-8"><CheckCircle2 className="mb-3 h-6 w-6"/>Gwarancja na usługę i części</div>
           <div className="rounded-2xl bg-white/5 p-8"><Clock className="mb-3 h-6 w-6"/>Dogodne terminy i szybkie realizacje</div>
-          <div className="rounded-2xl bg-white/5 p-8"><MapPin className="mb-3 h-6 w-6"/>Łatwy dojazd – {BIZ.city} & {SECOND.city}</div>
+          <div className="rounded-2xl bg-white/5 p-8"><MapPin className="mb-3 h-6 w-6"/>Łatwy dojazd – {BIZ.city}</div>
         </div>
       </Section>
 
@@ -933,7 +913,6 @@ export default function Website() {
               </a>
               <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BIZ.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:underline"><MapPin className="h-5 w-5"/> <span>{BIZ.street}, {BIZ.postal} {BIZ.city}</span></a>
               {/* Usunięto "Nawiguj" wg prośby */}
-              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SECOND.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:underline mt-2"><MapPin className="h-5 w-5"/> <span>{SECOND.street}, {SECOND.postal} {SECOND.city}</span></a>
               <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-white/80">
                 <strong>Godziny otwarcia:</strong> {BIZ.legal.hours}
               </div>
@@ -1129,12 +1108,12 @@ export default function Website() {
 
       {/* ===== MAPA (dolne karty z takim samym 'carbon' jak w hero) ===== */}
       <Section id="mapa" className="border-t border-white/10 bg-neutral-900" container={false}>
-        <div className="mx-auto max-w-6xl px-4 text-center">
+        <div className="mx-auto w-full max-w-6xl px-4 text-center">
           <h2 className="text-3xl font-extrabold tracking-tight">Mapa dojazdu</h2>
-          <p className="mt-3 text-white/70">Dwie lokalizacje: {BIZ.city} i {SECOND.city}</p>
+          <p className="mt-3 text-white/70">Warsztat w {BIZ.city}</p>
         </div>
 
-        <div className="mx-auto mt-8 grid max-w-6xl grid-cols-1 gap-10 md:gap-12 px-4">
+        <div className="mx-auto mt-8 flex w-full max-w-6xl flex-col gap-10 px-4">
           <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 p-8 shadow-2xl" style={carbonStyle}>
             <h3 className="text-sm font-semibold text-white/80">{BIZ.city}</h3>
             <div className="mt-2 flex items-center gap-2 text-white/80"><MapPin className="h-5 w-5"/> {BIZ.street}, {BIZ.postal} {BIZ.city}</div>
@@ -1142,15 +1121,6 @@ export default function Website() {
               <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BIZ.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-white/15 px-3 py-2 hover:bg-white/10">Otwórz w Mapach</a>
             </div>
             <MapEmbed query={BIZ.mapQuery} title={`Mapa – ${BIZ.city}`} className="mt-4" height={420} />
-          </div>
-
-          <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-neutral-900 p-8 shadow-2xl" style={carbonStyle}>
-            <h3 className="text-sm font-semibold text-white/80">{SECOND.city}</h3>
-            <div className="mt-2 flex items-center gap-2 text-white/80"><MapPin className="h-5 w-5"/> {SECOND.street}, {SECOND.postal} {SECOND.city}</div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SECOND.mapQuery)}`} target="_blank" rel="noopener noreferrer" className="rounded-2xl border border-white/15 px-3 py-2 hover:bg-white/10">Otwórz w Mapach</a>
-            </div>
-            <MapEmbed query={SECOND.mapQuery} title={`Mapa – ${SECOND.city}`} className="mt-4" height={420} />
           </div>
         </div>
       </Section>
@@ -1172,16 +1142,6 @@ export default function Website() {
                   className="hover:underline"
                 >
                   {BIZ.street}, {BIZ.postal} {BIZ.city}
-                </a>
-              </div>
-              <div>
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SECOND.mapQuery)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline"
-                >
-                  {SECOND.street}, {SECOND.postal} {SECOND.city}
                 </a>
               </div>
             </div>

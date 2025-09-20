@@ -589,6 +589,9 @@ function SecurityHardening(){
     // Note: kept broader in dev to avoid breaking Vite HMR.
     const hostname = window.location?.hostname || '';
     const isDev = hostname === 'localhost' || hostname === '127.0.0.1';
+    const connectSrc = ["'self'", "https://script.google.com", "https://script.googleusercontent.com"];
+    if (isDev) connectSrc.push("ws:", "wss:");
+
     const csp = [
       "default-src 'self'",
       "base-uri 'self'",
@@ -598,7 +601,7 @@ function SecurityHardening(){
       "font-src 'self' https://fonts.gstatic.com data:",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "frame-src https://www.google.com https://www.google.pl",
-      "connect-src 'self' " + (isDev ? "ws: wss:" : ""),
+      `connect-src ${connectSrc.join(' ')}`,
       "script-src 'self' 'unsafe-inline' blob:" + (isDev ? " 'unsafe-eval'" : "")
     ].filter(Boolean).join('; ');
 

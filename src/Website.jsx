@@ -190,7 +190,7 @@ function BrandLogo({ variant = "hero", className = "" }){
 
 const LOGO = {
   nav:    { h: 48,  dx: 0,  dy: 0,  scale: 1 },
-  hero:   { maxW: 560, dx: 0,  dy: 0,  scale: 1 },
+  hero:   { dx: 0,  dy: 0,  scale: 1 },
   footer: { w: 210, dx: -2, dy: 0,  scale: 1 },
 };
 
@@ -958,20 +958,20 @@ export default function Website() {
 
       {/* ===== HERO ===== */}
       <Section id="hero" className="relative overflow-hidden border-b border-white/10 bg-gradient-to-b from-neutral-900 to-neutral-950 pt-8 md:pt-12">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 md:gap-20 px-6 lg:grid-cols-2">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-start gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:gap-20">
           <ScaledLayer id="hero-left" dx={HERO.left.dx} dy={HERO.left.dy} scale={HERO.left.scale}>
             <div>
               <div className="mb-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm md:text-base text-white/80">
                 <CheckCircle2 className="h-5 w-5" /> Car audio • Mechanika • Wulkanizacja
               </div>
-              <h1 className="text-5xl font-extrabold leading-tight tracking-tight md:text-6xl">
-                <BrandLogo variant="hero" />
+              <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl md:text-6xl">
+                <BrandLogo variant="hero" className="mx-auto w-full max-w-[300px] sm:mx-0 sm:max-w-[420px]" />
               </h1>
-              <p className="mt-2 text-3xl font-black tracking-wide text-white/90">{BIZ.slogan}</p>
+              <p className="mt-2 text-2xl font-black tracking-wide text-white/90 sm:text-3xl">{BIZ.slogan}</p>
               <p className="mt-6 max-w-prose text-white/70">
                 Profesjonalny serwis samochodowy w {BIZ.city} i {SECOND.city}. Szybko diagnozujemy usterki, naprawiamy i oddajemy auto w pełni sprawne, często tego samego dnia.
               </p>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
                 <TelLink className="justify-self-end inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 font-semibold shadow hover:bg-rose-500">
                   <Phone className="h-5 w-5" /> Zadzwoń
                 </TelLink>
@@ -982,7 +982,7 @@ export default function Website() {
                   <MapPin className="h-5 w-5" /> Nawiguj
                 </a>
               </div>
-              <div className="mt-10 grid grid-cols-3 gap-4">
+              <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 <Stat value="15 min" label="Średni czas wyceny" />
                 <Stat value="> 2000" label="Napraw rocznie" />
                 <Stat value="Car Audio" label="Montaż i konfiguracja" />

@@ -819,7 +819,7 @@ export default function Website() {
               </h1>
               <p className="mt-2 text-2xl font-black tracking-wide text-white/90 sm:text-3xl">{BIZ.slogan}</p>
               <p className="mt-6 max-w-prose text-white/70">
-                Profesjonalny serwis samochodowy w {BIZ.city}. Szybko diagnozujemy usterki, naprawiamy i oddajemy auto w pełni sprawne, często tego samego dnia.
+                Profesjonalny serwis samochodowy w Łoźnicy. Szybko diagnozujemy usterki, naprawiamy i oddajemy auto w pełni sprawne, często tego samego dnia.
               </p>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4 sm:justify-start">
                 <TelLink className="justify-self-end inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 font-semibold shadow hover:bg-rose-500">
@@ -852,12 +852,12 @@ export default function Website() {
           <Stat value="15 min" label="Średni czas wyceny" />
           <Stat value="> 2000" label="Napraw rocznie" />
           <Stat value="Car Audio" label="Montaż i konfiguracja" />
-          <Stat value="Serwis" label="Olej • filtry" />
-          <Stat value="Diagnoza" label="Tester live-data" />
-          <Stat value="Reflektory" label="Renowacja UV" />
+          <Stat value="Serwis" label="Olej • filtry • wulkanizacja" />
+          <Stat value="Diagnoza" label="Diagnostyka i kasowanie błędów" />
+          <Stat value="Reflektory" label="Renowacja lamp" />
         </div>
       </Section>
-
+      
       {/* ===== USŁUGI ===== */}
       <Section id="uslugi" className="border-b border-white/10">
         <div className="mx-auto max-w-2xl text-center">

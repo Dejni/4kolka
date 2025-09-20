@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useId, useLayoutEffect, useRef } from "react";
-import { Phone, MapPin, Wrench, Gauge, Clock, Car, CheckCircle2, MessageSquare, Music, Cookie, AlertTriangle, Paperclip, ChevronDown, Facebook, ArrowUpRight } from "lucide-react";
+import { Phone, MapPin, Wrench, Gauge, Clock, Car, CheckCircle2, MessageSquare, Music, Cookie, AlertTriangle, ChevronDown, Facebook, ArrowUpRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 /* ==================== KONFIG / DANE ==================== */
@@ -392,18 +392,6 @@ function MapEmbed({ query, title = "Mapa", className = "", height = 256 }) {
 
 /* ==================== SECTIONS / COMPONENTS ==================== */
 
-const MAX_ATTACHMENTS = 3;
-const MAX_ATTACHMENT_SIZE_MB = 15;
-const MAX_TOTAL_ATTACHMENT_SIZE_MB = 15;
-const ALLOWED_ATTACHMENT_TYPES = new Set([
-  'application/pdf',
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'image/heic',
-  'image/heif',
-]);
-
 const PHONE_PREFIXES = [
   { code: '+48', country: 'Polska', flag: '🇵🇱', minDigits: 9, maxDigits: 9 },
   { code: '+49', country: 'Niemcy', flag: '🇩🇪', minDigits: 5, maxDigits: 13 },
@@ -431,15 +419,12 @@ const PHONE_PREFIXES = [
 
 const DEFAULT_PHONE_RULE = { minDigits: 5, maxDigits: 12 };
 
-const CONTACT_ENDPOINT = import.meta.env.VITE_CONTACT_ENDPOINT?.trim() || "/contact.php";
-
 const FIELD_ERROR_LABELS = {
   name: 'Imię',
   phone: 'Telefon',
   email: 'E-mail',
   vin: 'VIN',
   msg: 'Wiadomość',
-  attachments: 'Załączniki',
 };
 
 const findPhoneRule = (prefix) => PHONE_PREFIXES.find((item) => item.code === prefix) || DEFAULT_PHONE_RULE;
@@ -458,11 +443,6 @@ const getPhoneError = (prefix, localValue) => {
       : `Numer dla prefiksu ${prefix} powinien mieć od ${min} do ${max} cyfr (wpisz część po prefiksie).`;
   }
   return '';
-};
-
-const formatFileSize = (bytes) => {
-  if (bytes <= 0 || Number.isNaN(bytes)) return '0 MB';
-  return `${(bytes / (1024 * 1024)).toFixed(bytes >= 10 * 1024 * 1024 ? 1 : 2)} MB`;
 };
 
 const Section = ({ id, className = "", children, container = true }) => (
@@ -638,8 +618,6 @@ export default function Website() {
   // === Form state, validation, and submission ===
   const [form, setForm] = useState({ name: "", phone: "", email: "", vin: "", msg: "" });
   const [errors, setErrors] = useState({});
-  const [files, setFiles] = useState([]);
-  const [fileError, setFileError] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [honeypot, setHoneypot] = useState("");
@@ -674,85 +652,6 @@ export default function Website() {
     return e;
   };
 
-  const handleFileChange = (event) => {
-    const selected = Array.from(event.target.files || []);
-
-    if (!selected.length) {
-      event.target.value = "";
-      return;
-    }
-
-    const normalizeKey = (file) => `${file.name}-${file.size}-${file.lastModified}`;
-    const existingKeys = new Set(files.map(normalizeKey));
-    const merged = [...files];
-    selected.forEach((file) => {
-      const key = normalizeKey(file);
-      if (!existingKeys.has(key)) {
-        merged.push(file);
-        existingKeys.add(key);
-      }
-    });
-
-    let errorMessage = "";
-    if (merged.length > MAX_ATTACHMENTS) {
-      errorMessage = `Możesz dodać maksymalnie ${MAX_ATTACHMENTS} pliki. Zostawiliśmy pierwsze ${MAX_ATTACHMENTS}.`;
-    }
-    const limited = merged.slice(0, MAX_ATTACHMENTS);
-
-    const tooLarge = limited.find((file) => file.size > MAX_ATTACHMENT_SIZE_MB * 1024 * 1024);
-    if (tooLarge) {
-      const message = `Plik "${tooLarge.name}" jest zbyt duży (limit ${MAX_ATTACHMENT_SIZE_MB} MB).`;
-      setFileError(message);
-      setErrors((prev) => ({ ...prev, attachments: message }));
-      event.target.value = "";
-      return;
-    }
-
-    const disallowed = limited.find((file) => file.type && !ALLOWED_ATTACHMENT_TYPES.has(file.type));
-    if (disallowed) {
-      const message = `Plik "${disallowed.name}" ma nieobsługiwany format. Dozwolone: PDF, JPG, PNG, WEBP.`;
-      setFileError(message);
-      setErrors((prev) => ({ ...prev, attachments: message }));
-      event.target.value = "";
-      return;
-    }
-
-    const totalBytes = limited.reduce((sum, file) => sum + file.size, 0);
-    if (totalBytes > MAX_TOTAL_ATTACHMENT_SIZE_MB * 1024 * 1024) {
-      const message = `Łączny rozmiar załączników to ${formatFileSize(totalBytes)} (limit ${MAX_TOTAL_ATTACHMENT_SIZE_MB} MB).`;
-      setFileError(message);
-      setErrors((prev) => ({ ...prev, attachments: message }));
-      event.target.value = "";
-      return;
-    }
-
-    setFiles(limited);
-    setFileError(errorMessage);
-    setErrors((prev) => {
-      const next = { ...prev };
-      if (errorMessage) {
-        next.attachments = errorMessage;
-      } else {
-        delete next.attachments;
-      }
-      return next;
-    });
-    event.target.value = "";
-  };
-
-  const removeFile = (index) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
-    setFileError("");
-    setErrors((prev) => {
-      if (!prev.attachments) return prev;
-      const next = { ...prev };
-      delete next.attachments;
-      return next;
-    });
-  };
-
-  const totalAttachmentBytes = files.reduce((sum, file) => sum + (file?.size ?? 0), 0);
-
   const handleFeedbackClose = () => {
     setFeedback(null);
     const last = lastFocusRef.current;
@@ -785,16 +684,6 @@ export default function Website() {
       return;
     }
 
-    if (fileError) {
-      showFeedback('error', 'Załączniki', fileError || 'Sprawdź dodane pliki i spróbuj ponownie.');
-      return;
-    }
-
-    if (!CONTACT_ENDPOINT) {
-      showFeedback('error', 'Konfiguracja', 'Formularz nie ma skonfigurowanego adresu wysyłki. Skontaktuj się z administratorem.');
-      return;
-    }
-
     const phoneValue = formatPhone(phonePrefix, phoneLocal);
     const payload = {
       name: (form.name || "").trim(),
@@ -809,87 +698,61 @@ export default function Website() {
     setIsSubmitting(true);
 
     try {
-      const attachmentsPayload = files.length ? await filesToAttachmentPayload(files) : [];
-      if (attachmentsPayload.length) {
-        payload.attachments = attachmentsPayload;
+      const subjectName = payload.name ? ` od ${payload.name}` : '';
+      const subject = `Zapytanie${subjectName} — ${BIZ.name}`;
+      const bodyLines = [
+        'Dzień dobry,',
+        '',
+        'Poniżej szczegóły zapytania przesłanego przez formularz 4 KÓŁKA:',
+        `Imię: ${payload.name || '-'}`,
+        `Telefon: ${payload.phone || '-'}`,
+        `E-mail: ${payload.email || '-'}`,
+        `VIN: ${payload.vin || '-'}`,
+        '',
+        'Opis problemu:',
+        payload.msg || '-',
+        '',
+        `Źródło zgłoszenia: ${payload.source}`,
+        `Data wysłania: ${new Date(payload.timestamp).toLocaleString('pl-PL')}`,
+        '',
+        'Pozdrawiam,',
+        payload.name || 'Klient 4 KÓŁKA',
+      ];
+
+      const mailto = `mailto:${encodeURIComponent(BIZ.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyLines.join('\n'))}`;
+
+      let mailOpened = false;
+      if (typeof window !== 'undefined') {
+        const popup = window.open(mailto, '_blank', 'noopener,noreferrer');
+        if (popup) {
+          mailOpened = true;
+        } else {
+          window.location.href = mailto;
+          mailOpened = true;
+        }
       }
 
-      const res = await fetch(CONTACT_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json().catch(() => null);
-
-      if (res.ok && (data?.ok ?? true)) {
+      if (mailOpened) {
         showFeedback(
-          "success",
-          "Wiadomość wysłana",
-          "Dziękujemy za kontakt. Skontaktujemy się możliwie najszybciej telefonicznie lub mailowo."
+          'success',
+          'Przygotowaliśmy wiadomość',
+          'Otworzyliśmy Twój program pocztowy z wypełnioną wiadomością. Sprawdź treść i wyślij e-mail.'
         );
         setForm({ name: "", phone: "", email: "", vin: "", msg: "" });
         setErrors({});
-        setFiles([]);
-        setFileError("");
         setPhonePrefix(PHONE_PREFIXES[0].code);
         setPhoneLocal("");
         setHoneypot('');
         return;
       }
 
-      const detail = data?.error || '';
-
-      if (data?.details?.fieldErrors) {
-        const fe = data.details.fieldErrors;
-        const fieldEntries = Object.entries(fe).filter(([, arr]) => Array.isArray(arr) && arr.length);
-        if (fieldEntries.length) {
-          const serverErrors = fieldEntries.reduce((acc, [field, arr]) => {
-            acc[field] = arr[0];
-            return acc;
-          }, {});
-          setErrors((prev) => ({ ...prev, ...serverErrors }));
-          const detailsMessage = fieldEntries
-            .map(([field, arr]) => `${FIELD_ERROR_LABELS[field] ?? field}: ${arr[0]}`)
-            .join(' ');
-          showFeedback('error', 'Popraw formularz', detailsMessage);
-          return;
-        }
-      }
-
-      if (res.status === 503 || detail === "MAIL_DISABLED") {
-        showFeedback(
-          "error",
-          "Serwer pocztowy niedostępny",
-          `Nie mogliśmy wysłać wiadomości, bo skrzynka odbiorcza jest chwilowo offline. Zadzwoń proszę pod numer ${BIZ.phone} – załatwimy sprawę telefonicznie.`,
-          { showContact: true }
-        );
-      } else if (res.status === 429) {
-        showFeedback(
-          "error",
-          "Zbyt wiele prób",
-          "Wygląda na to, że formularz został wysłany wiele razy w krótkim czasie. Odczekaj kilka minut i spróbuj ponownie."
-        );
-      } else if (res.status >= 500) {
-        showFeedback(
-          "error",
-          "Problem po stronie serwera",
-          "Coś poszło nie tak po naszej stronie. Spróbuj ponownie za chwilę albo skontaktuj się z nami telefonicznie.",
-          { showContact: true }
-        );
-      } else {
-        showFeedback(
-          "error",
-          "Nie udało się wysłać",
-          "Sprawdź, czy wszystkie pola są uzupełnione poprawnie i spróbuj ponownie."
-        );
-      }
+      throw new Error('MAILTO_BLOCKED');
     } catch (err) {
       console.error(err);
       showFeedback(
         "error",
-        "Brak połączenia",
-        "Nie udało się połączyć z serwerem. Sprawdź dostęp do internetu i spróbuj ponownie albo zadzwoń do nas.",
+        "Nie udało się otworzyć programu pocztowego",
+        `Nie mogliśmy przygotować wiadomości e-mail automatycznie. Wyślij proszę maila na adres ${BIZ.email} lub zadzwoń do nas.`,
         { showContact: true }
       );
     } finally {
@@ -1076,7 +939,7 @@ export default function Website() {
               </div>
             </div>
             <TelLink className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-rose-600 px-4 py-3 font-semibold shadow hover:bg-rose-500"><Phone className="h-5 w-5"/>Zadzwoń teraz</TelLink>
-            <div className="rounded-2xl border border-white/20 bg-neutral-900/90 p-5 text-sm text-white/85 space-y-3 shadow-xl shadow-black/30">
+            <div className="rounded-2xl border border-white/20 bg-neutral-900/90 p-6 md:p-7 text-sm text-white/85 space-y-4 shadow-xl shadow-black/30 min-h-[260px]">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-white/65">
                 <Facebook className="h-4 w-4 text-[#E11D48]" aria-hidden="true" /> Znajdź nas na Facebooku
               </div>
@@ -1092,18 +955,6 @@ export default function Website() {
               >
                 Otwórz profil <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
               </a>
-              <div className="mt-5 rounded-xl border border-[#F43F5E]/20 bg-[#111]/95 p-4">
-                <p className="font-semibold text-white">Zostaw opinię</p>
-                <p className="mt-1 text-xs text-white/70">Byłeś/aś naszym klientem i jesteś zadowolony? Będziemy wdzięczni za kilka słów rekomendacji.</p>
-                <a
-                  href={SOCIAL_LINKS.facebookReviews}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#F43F5E] hover:text-[#FDA4AF]"
-                >
-                  Napisz opinię na Facebooku <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
-                </a>
-              </div>
             </div>
           </div>
 
@@ -1249,40 +1100,6 @@ export default function Website() {
                 className={`w-full rounded-xl border bg-neutral-900 px-4 py-3 outline-none ${errors?.msg ? "border-rose-500" : "border-white/15"} focus:border-rose-500`}
               />
               {errors?.msg && <p className="mt-1 text-xs text-rose-400">{errors?.msg}</p>}
-              <div>
-                <label className="block text-sm font-medium text-white/80">Załącz pliki (opcjonalnie, maks. {MAX_ATTACHMENTS})</label>
-                <div className="mt-2 flex flex-wrap items-center gap-3">
-                  <label
-                    htmlFor="attachments-input"
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-white/80 transition hover:border-white/40 hover:bg-white/10"
-                  >
-                    <Paperclip className="h-4 w-4" /> Dodaj załącznik
-                  </label>
-                  <input
-                    id="attachments-input"
-                    type="file"
-                    multiple
-                    accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.heif"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                  <span className="text-xs text-white/60">Możesz przeciągnąć pliki lub kliknąć przycisk, aby wybrać z urządzenia.</span>
-                </div>
-                {files.length > 0 && (
-                  <ul className="mt-2 space-y-1 text-xs text-white/70">
-                    {files.map((file, index) => (
-                      <li key={`${file.name}-${index}`} className="flex items-center justify-between gap-3 rounded-lg bg-white/5 px-3 py-2">
-                        <span className="truncate" title={`${file.name} (${(file.size/1024).toFixed(0)} KB)`}>{file.name}</span>
-                        <button type="button" onClick={() => removeFile(index)} className="text-rose-400 hover:text-rose-300">Usuń</button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {fileError && <p className="mt-2 text-xs text-rose-400">{fileError}</p>}
-                <p className="mt-2 text-xs text-white/50">
-                  Łączny rozmiar: {formatFileSize(totalAttachmentBytes)} / {MAX_TOTAL_ATTACHMENT_SIZE_MB} MB.
-                </p>
-              </div>
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -1291,6 +1108,20 @@ export default function Website() {
               >
                 {isSubmitting ? 'Wysyłanie…' : 'Wyślij zapytanie'}
               </button>
+              <div className="mt-6 rounded-2xl border border-[#F43F5E]/25 bg-[#111]/90 p-5 text-left text-sm text-white/80 shadow-lg shadow-black/30">
+                <p className="font-semibold text-white">Zostaw opinię</p>
+                <p className="mt-2 text-xs text-white/70 leading-relaxed">
+                  Byłeś/aś naszym klientem i jesteś zadowolony? Twoja rekomendacja na Facebooku pomoże innym kierowcom trafić do 4 KÓŁKA.
+                </p>
+                <a
+                  href={SOCIAL_LINKS.facebookReviews}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#F43F5E] hover:text-[#FDA4AF]"
+                >
+                  Napisz opinię na Facebooku <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              </div>
             </form>
           </div>
         </div>

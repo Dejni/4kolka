@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useId, useLayoutEffect, useRef } from "react";
-import { Phone, MapPin, Wrench, Gauge, Clock, Car, CheckCircle2, MessageSquare, Music, Cookie, AlertTriangle, ChevronDown, Facebook, ArrowUpRight } from "lucide-react";
+import { Phone, MapPin, Wrench, Gauge, Clock, Car, CheckCircle2, MessageSquare, Music, Cookie, AlertTriangle, ChevronDown, Facebook, ArrowUpRight, Lightbulb } from "lucide-react";
 import { motion } from "framer-motion";
 
 /* ==================== KONFIG / DANE ==================== */
@@ -855,6 +855,19 @@ export default function Website() {
           <Stat value="Serwis" label="Olej • filtry • wulkanizacja" />
           <Stat value="Diagnoza" label="Diagnostyka i kasowanie błędów" />
           <Stat value="Reflektory" label="Renowacja lamp" />
+        </div>
+
+        <div className="mt-10 space-y-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+            <Stat icon={Clock} value="Wycena" label="15 min średni czas" />
+            <Stat icon={Wrench} value="Naprawy" label="> 2000 rocznie" />
+          </div>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <Stat icon={Music} value="Car Audio" label="Montaż i konfiguracja" />
+            <Stat icon={Car} value="Serwis" label="Olej • filtry • wulkanizacja" />
+            <Stat icon={Gauge} value="Diagnoza" label="Diagnostyka i kasowanie błędów" />
+            <Stat icon={Lightbulb} value="Reflektory" label="Renowacja lamp" />
+          </div>
         </div>
       </Section>
       
